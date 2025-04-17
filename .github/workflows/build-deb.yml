@@ -1,0 +1,45 @@
+name: Build Debian Package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dh-virtualenv stdeb debhelper python3-stdeb
+
+      - name: Build .deb package
+        run: |
+          # 生成 Debian 控制文件
+          python3 setup.py --command-packages=stdeb.command bdist_deb
+
+          # 手动修正 .deb 文件结构（包含图片和YAML）
+          mkdir -p deb_dist/drone-eval-app-6.0/debian/
+          cp -r src/newprompts.yaml src/pic1.png deb_dist/drone-eval-app-6.0/
+          echo "src/newprompts.yaml /usr/share/drone-eval-app/" > deb_dist/drone-eval-app-6.0/debian/install
+          echo "src/pic1.png /usr/share/drone-eval-app/" >> deb_dist/drone-eval-app-6.0/debian/install
+
+          # 重新打包
+          cd deb_dist/drone-eval-app-6.0/
+          dpkg-buildpackage -us -uc
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: drone-eval-deb
+          path: deb_dist/*.deb
