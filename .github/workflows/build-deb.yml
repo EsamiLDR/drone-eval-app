@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y dh-virtualenv debhelper python3-setuptools build-essential python3-all dh-python
-          pip install stdeb
+          pip install stdeb setuptools --upgrade
 
       - name: Build .deb package
         run: |
@@ -37,6 +37,8 @@ jobs:
 
           # 重新打包
           cd deb_dist/drone-eval-app-6.0/
+          # 修改安装命令，去除 --install-layout 选项
+          sed -i 's/--install-layout=deb//' debian/rules
           dpkg-buildpackage -us -uc
 
       - name: Upload artifact
