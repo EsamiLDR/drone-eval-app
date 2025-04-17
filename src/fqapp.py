@@ -6,6 +6,15 @@ import re
 import threading
 import os
 import math
+import sys
+
+def get_resource_path(relative_path):
+    """获取打包后资源文件的绝对路径"""
+    if getattr(sys, 'frozen', False):  # 打包后的环境
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
 
 
 
@@ -34,7 +43,7 @@ class StartPage:
 
         # 加载图片
         try:
-            self.bg_image = tk.PhotoImage(file="pic1.png")
+            self.bg_image = tk.PhotoImage(file=get_resource_path("pic1.png"))
             img_label = ttk.Label(img_frame, image=self.bg_image)
             img_label.pack()
         except Exception as e:
@@ -77,10 +86,10 @@ class DroneEvaluationApp:
         )
 
         # 加载预定义指标
-        with open('newprompts.yaml', 'r', encoding='utf-8') as f:
+        with open(get_resource_path("newprompts.yaml"), 'r', encoding='utf-8') as f:
             self.all_metrics = yaml.safe_load(f)['phases']['phase1']
 
-        with open('newprompts.yaml', 'r', encoding='utf-8') as f:
+        with open(get_resource_path("newprompts.yaml"), 'r', encoding='utf-8') as f:
             self.metric_descriptions = yaml.safe_load(f)['metric_descriptions']
 
         #self.metric_descriptions = self.parse_metric_descriptions()
@@ -1070,7 +1079,7 @@ class DroneEvaluationApp:
             self.streaming_active = True
             full_content = ""
 
-            with open('newprompts.yaml', 'r', encoding='utf-8') as f:
+            with open(get_resource_path("newprompts.yaml"), 'r', encoding='utf-8') as f:
                 phase2_template = yaml.safe_load(f)['phases']['phase2']
 
             full_prompt = phase2_template.format(
