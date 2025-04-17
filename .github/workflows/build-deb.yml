@@ -21,7 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y dh-virtualenv stdeb debhelper python3-stdeb
+          sudo apt-get install -y dh-virtualenv debhelper python3-setuptools
+          pip install stdeb
 
       - name: Build .deb package
         run: |
