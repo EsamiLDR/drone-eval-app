@@ -3,21 +3,23 @@ from setuptools import setup, find_packages
 setup(
     name="drone-eval-app",
     version="6.0",
-    description="This is a drone evaluation application that provides related functions and services.",  # 添加描述信息
-    long_description="This is a more detailed description of the drone evaluation application. It can be used to evaluate drones, and it depends on some specific Python libraries.",  # 可选，详细描述
-    long_description_content_type="text/markdown",  # 可选，指定详细描述的格式
-    packages=find_packages(),
+    description="Drone evaluation application",
+    long_description=open("README.md").read(),  # 确保有 README.md 文件
+    long_description_content_type="text/markdown",
+    packages=find_packages(where="src"),  # 明确指定包目录
+    package_dir={"": "src"},             # 关键：声明包根目录为 src
     install_requires=[
-        "tkinter",          # 通常系统自带
+        "tkinter",
         "pyyaml>=6.0",
         "openai>=1.0",
     ],
-    data_files=[
-        ("share/drone-eval-app", ["src/newprompts.yaml", "src/pic1.png"]),
-    ],
+    package_data={
+        "drone_eval_app": ["*.yaml", "*.png"],  # 使用 package_data 替代 data_files
+    },
     entry_points={
         "console_scripts": [
-            "drone-eval=src.fqapp:main",  
+            "drone-eval=src.fqapp:main",  # 确保路径正确
         ],
     },
+    python_requires=">=3.10",  # 明确 Python 版本要求
 )
