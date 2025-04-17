@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "drone-eval=src.fqapp6点0:main",  
+            "drone-eval=src.fqapp:main",  
         ],
     },
 )
