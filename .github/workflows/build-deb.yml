@@ -37,8 +37,10 @@ jobs:
 
           # 重新打包
           cd deb_dist/drone-eval-app-6.0/
-          # 修改安装命令，去除 --install-layout 选项
-          sed -i 's/--install-layout=deb//' debian/rules
+          # 修改 debian/rules 文件，移除 --install-layout=deb 选项
+          sed -i 's/--install-layout=deb//g' debian/rules
+          # 设置兼容性级别为 10
+          echo "10" > debian/compat
           dpkg-buildpackage -us -uc
 
       - name: Upload artifact
